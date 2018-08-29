@@ -1,7 +1,7 @@
 # WGU-C968
 Inventory Management program in C#
-Create a C# application with a graphical user interface (GUI) based on the attached “GUI Mock-Up.” Write code to display each of the following forms in the GUI:
 
+Create a C# application with a graphical user interface (GUI) based on the attached “GUI Mock-Up.” Write code to display each of the following forms in the GUI:
  
 
 A.  A main form, showing the following controls:
