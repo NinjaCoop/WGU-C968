@@ -297,7 +297,6 @@
             get { return int.Parse(modPartMinBox.Text); }
             set { modPartMinBox.Text = value.ToString(); }
         }
-        // Add properties for Machine ID and Company Name
         public string ModPartMachComBoxText
         {
             get { return modPartMachComBox.Text; }

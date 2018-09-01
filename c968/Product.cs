@@ -22,7 +22,21 @@ namespace c968
         public int ProductID { get; set; }
         public string Name { get; set; }
         public int InStock { get; set; }
-        public decimal Price { get; set; }
+        public string Price
+        {
+            get { return price.ToString("C"); }
+            set
+            {
+                if (value.StartsWith("$"))
+                {
+                    price = decimal.Parse(value.Substring(1));
+                }
+                else
+                {
+                    price = decimal.Parse(value);
+                }
+            }
+        }
         public int Max { get; set; }
         public int Min { get; set; }
 
@@ -32,7 +46,7 @@ namespace c968
             ProductID = prodID;
             Name = name;
             InStock = inStock;
-            Price = price;
+            Price = price.ToString();
             Max = max;
             Min = min;
         }
@@ -63,16 +77,18 @@ namespace c968
         }
 
         // To finish - not all paths return a value
-        //public Part LookupAssociatedPart(int partID)
-        //{
-        //    //TODO - return blank part on failure?
-        //    foreach (Part part in AssociatedParts)
-        //    {
-        //        if (part.PartID == partID)
-        //        {
-        //            return part;
-        //        }
-        //    }
-        //}
+        public Part LookupAssociatedPart(int partID)
+        {
+            //TODO - return blank part on failure?
+            foreach (Part part in AssociatedParts)
+            {
+                if (part.PartID == partID)
+                {
+                    return part;
+                }
+            }
+            InHousePart emptyInPart = new InHousePart();
+            return emptyInPart;
+        }
     }
 }

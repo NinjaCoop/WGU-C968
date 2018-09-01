@@ -12,23 +12,22 @@ namespace c968
 {
     public partial class MainScreen : Form
     {
-        
         public MainScreen()
         {
             InitializeComponent();
             MainScreenFormLoad();
         }
 
-        // TEST - BINDINGS UPDATE PROPERLY
         public void MainScreenFormLoad()
         {
             // Pre-populate the lists with dummy data
             Inventory.PopulateDummyLists();
 
-            // All parts in inventory show in the left table
+            // All Parts in inventory show in the left table
             var bsPart = new BindingSource();
             bsPart.DataSource = Inventory.Parts;
             mainPartsGrid.DataSource = bsPart;
+
             mainPartsGrid.Columns["PartID"].HeaderText = "Part ID";
             mainPartsGrid.Columns["Name"].HeaderText = "Part Name";
             mainPartsGrid.Columns["InStock"].HeaderText = "Inventory";
@@ -40,6 +39,7 @@ namespace c968
             var bsProd = new BindingSource();
             bsProd.DataSource = Inventory.Products;
             mainProductsGrid.DataSource = bsProd;
+
             mainProductsGrid.Columns["ProductID"].HeaderText = "Product ID";
             mainProductsGrid.Columns["Name"].HeaderText = "Product Name";
             mainProductsGrid.Columns["InStock"].HeaderText = "Inventory";
@@ -48,18 +48,24 @@ namespace c968
             mainProductsGrid.Columns["Min"].Visible = false;
         }
 
-        // Redirect Button Functionalities
         private void btnAddPart_Click(object sender, EventArgs e)
         {   
             new AddPartScreen().ShowDialog();
         }
 
-        // TEST - DETERMINE INHOUSE v OUTSOURCED
         private void btnModifyPart_Click(object sender, EventArgs e)
         {
-
-            Part selectedPart = (Part)mainPartsGrid.CurrentRow.DataBoundItem;
-            new ModifyPartScreen(selectedPart).ShowDialog();
+            // Opens the modify parts screen with selected part after checking part type
+            if(mainPartsGrid.CurrentRow.DataBoundItem.GetType() == typeof(c968.InHousePart))
+            {
+                InHousePart inPart = (InHousePart)mainPartsGrid.CurrentRow.DataBoundItem;
+                new ModifyPartScreen(inPart).ShowDialog();
+            }
+            else
+            {
+                OutsourcedPart outPart = (OutsourcedPart)mainPartsGrid.CurrentRow.DataBoundItem;
+                new ModifyPartScreen(outPart).ShowDialog();
+            }
         }
 
         private void btnAddProduct_Click(object sender, EventArgs e)
@@ -74,10 +80,8 @@ namespace c968
             new ModifyProductScreen(selectedProduct).ShowDialog();
         }
 
-        // Action Button Functionalities
         private void btnDeletePart_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Are you sure you want to delete this part?");                  // Confirm deletion of part
             foreach (DataGridViewRow row in mainPartsGrid.SelectedRows)
             {
                 mainPartsGrid.Rows.RemoveAt(row.Index);
@@ -85,6 +89,14 @@ namespace c968
         }
         private void btnDeleteProduct_Click(object sender, EventArgs e)
         {
+            // Exception Control Set 2.1
+            Product prod = (Product)mainProductsGrid.CurrentRow.DataBoundItem;
+            if (prod.AssociatedParts.Count > 0)
+            {
+                MessageBox.Show("Cannot delete a Product with a part assigned to it.\nPlease removed assigned parts.");
+                return;
+            }
+
             foreach (DataGridViewRow row in mainProductsGrid.SelectedRows)
             {
                 mainProductsGrid.Rows.RemoveAt(row.Index);
@@ -93,36 +105,48 @@ namespace c968
 
         private void btnPartsSearch_Click(object sender, EventArgs e)
         {
-            // Do nothing if search box is empty
             if (searchBoxPartsText < 1)
                 return;
 
             Part match = Inventory.LookupPart(searchBoxPartsText);
-            //take the returned part and show it in DataGridView
+
+            // Take the returned part and show it in DataGridView
+            foreach(DataGridViewRow row in mainPartsGrid.Rows)
+            {
+                Part part = (Part)row.DataBoundItem;
+
+                if(part.PartID == match.PartID)
+                {
+                    row.Selected = true;
+                    break;
+                }
+                else
+                {
+                    row.Selected = false;
+                }
+            }
         }
 
-
-        // TO TEST - LE SEARCH - SEARCH CURRENTLY WORKING ONLY ON SELECTED ROW WITH SAME ID #
         private void btnProductsSearch_Click(object sender, EventArgs e)
         {
-            // Do nothing if search box is empty
             if (searchBoxProductsText < 1)
                 return;
 
             Product match = Inventory.LookupProduct(searchBoxProductsText);
-            int searchID = match.ProductID;
-            //take the returned product and show it in DataGridView
-            foreach(DataGridViewRow row in mainProductsGrid.Rows)
+
+            // Take the returned product and show it in DataGridView
+            foreach (DataGridViewRow row in mainProductsGrid.Rows)
             {
                 Product prod = (Product)row.DataBoundItem;
-                //filter the rows
-                if (prod.ProductID == searchID)
+
+                if (prod.ProductID == match.ProductID)
                 {
-                    row.Visible = true;
+                    row.Selected = true;
+                    break;
                 }
                 else
                 {
-                    row.Visible = false;
+                    row.Selected = false;
                 }
             }
         }

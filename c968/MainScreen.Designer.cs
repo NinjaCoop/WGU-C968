@@ -309,8 +309,8 @@
         private System.Windows.Forms.Button btnExit;
         private System.Windows.Forms.GroupBox groupBoxProducts;
         private System.Windows.Forms.GroupBox groupBoxParts;
-        public  System.Windows.Forms.DataGridView mainProductsGrid; //public?
-        public  System.Windows.Forms.DataGridView mainPartsGrid; //public?
+        public  System.Windows.Forms.DataGridView mainProductsGrid;
+        public  System.Windows.Forms.DataGridView mainPartsGrid;
 
         public int searchBoxPartsText
         {

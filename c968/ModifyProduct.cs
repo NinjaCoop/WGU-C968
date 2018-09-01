@@ -13,6 +13,8 @@ namespace c968
     public partial class ModifyProductScreen : Form
     {
         BindingList<Part> partsToAdd = new BindingList<Part>();
+        MainScreen MainForm = (MainScreen)Application.OpenForms["MainScreen"];
+
         public ModifyProductScreen(Product prod)
         {
             InitializeComponent();
@@ -25,7 +27,7 @@ namespace c968
             ModProdIDBoxText = selectedProd.ProductID;
             ModProdNameBoxText = selectedProd.Name;
             ModProdInvBoxText = selectedProd.InStock;
-            ModProdPriceBoxText = selectedProd.Price;
+            ModProdPriceBoxText = decimal.Parse(selectedProd.Price.Substring(1));
             ModProdMaxBoxText = selectedProd.Max;
             ModProdMinBoxText = selectedProd.Min;
 
@@ -71,16 +73,25 @@ namespace c968
             }
         }
 
-        // FIX - SEARCH BUTTON
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            string searchValue = searchBoxModProd.Text;
+            // Search by part ID
+            int searchValue = int.Parse(searchBoxModProd.Text);
+
+            Part match = Inventory.LookupPart(searchValue);
+
             foreach(DataGridViewRow row in modifyProductGrid1.Rows)
             {
-                if (row.Cells[1].Value.ToString().Contains(searchValue))
+                Part part = (Part)row.DataBoundItem;
+
+                if (part.PartID == match.PartID)
                 {
                     row.Selected = true;
                     break;
+                }
+                else
+                {
+                    row.Selected = false;
                 }
             }
         }
@@ -89,15 +100,19 @@ namespace c968
         {
             Part partToAdd = (Part)modifyProductGrid1.CurrentRow.DataBoundItem;
             partsToAdd.Add(partToAdd);
-            partsToAdd.ResetBindings();
         }
 
         private void btnSaveModProduct_Click(object sender, EventArgs e)
         {
-            // This part of it works
+            // Exception Control Set 1.3
+            if (ModProdMaxBoxText < ModProdMinBoxText)
+            {
+                MessageBox.Show("Minimum cannot be greate than the Maximum.");
+                return;
+            }
+
             Product updatedProduct = new Product(ModProdIDBoxText, ModProdNameBoxText, ModProdInvBoxText, ModProdPriceBoxText, ModProdMaxBoxText, ModProdMinBoxText);
 
-            // This isn't saving added parts to the product itself
             foreach (Part newPart in partsToAdd)
             {
                 updatedProduct.AddAssociatedPart(newPart);
@@ -105,6 +120,10 @@ namespace c968
 
             Inventory.UpdateProduct(ModProdIDBoxText, updatedProduct);
             this.Close();
+
+            MainForm.MainScreenFormLoad();
+            MainForm.mainProductsGrid.Update();
+            MainForm.mainProductsGrid.Refresh();
         }
 
         private void btnCancelModProduct_Click(object sender, EventArgs e)

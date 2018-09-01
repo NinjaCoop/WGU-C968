@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace c968
 {
-    class OutsourcedPart : Part
+    public class OutsourcedPart : Part
     {
         private string companyName;
 
@@ -19,7 +19,7 @@ namespace c968
             PartID = partID;
             Name = name;
             InStock = inStock;
-            Price = price;
+            Price = price.ToString();
             Max = max;
             Min = max;
         }
@@ -29,7 +29,7 @@ namespace c968
             PartID = partID;
             Name = name;
             InStock = inStock;
-            Price = price;
+            Price = price.ToString();
             Max = max;
             Min = max;
             CompanyName = compName;

@@ -96,7 +96,6 @@ namespace c968
             return emptyProd;
         }
 
-        // TO TEST
         public static void UpdateProduct(int productID, Product updatedProd)
         {
             foreach (Product currentProd in Products)
@@ -108,6 +107,7 @@ namespace c968
                     currentProd.Price = updatedProd.Price;
                     currentProd.Max = updatedProd.Max;
                     currentProd.Min = updatedProd.Min;
+                    currentProd.AssociatedParts = updatedProd.AssociatedParts;
                     return;
                 }
             }
@@ -134,7 +134,6 @@ namespace c968
             }
         }
 
-        // TO FINISH - not all paths return a value
         public static Part LookupPart(int partID)
         {
             foreach (Part part in Parts)
@@ -143,28 +142,48 @@ namespace c968
                 {
                     return part;
                 }
-                else
-                {
-                    MessageBox.Show("No matches found.");
-                }
             }
-            Part emptyPart = new InHousePart();
+            Part emptyPart = null;//new InHousePart();
             return emptyPart;
         }
 
-        // TO TEST - MODIFY PART
-        public static void UpdatePart(int partID, Part part)
+        public static void UpdateInHousePart(int partID, InHousePart inPart)
         {
-            foreach (Part updatedPart in Parts)
+            for(int i = 0; i < Parts.Count; i++)
             {
-                if (updatedPart.PartID == partID)
+                if(Parts[i].GetType() == typeof(c968.InHousePart))
                 {
-                    updatedPart.Name = part.Name;
-                    updatedPart.InStock = part.InStock;
-                    updatedPart.Price = part.Price;
-                    updatedPart.Max = part.Max;
-                    updatedPart.Min = part.Min;
-                    return;
+                    InHousePart newPart = (InHousePart)Parts[i];
+
+                    if(newPart.PartID == partID)
+                    {
+                        newPart.Name = inPart.Name;
+                        newPart.InStock = inPart.InStock;
+                        newPart.Price = inPart.Price;
+                        newPart.Max = inPart.Max;
+                        newPart.Min = inPart.Min;
+                        newPart.MachineID = inPart.MachineID;
+                    }
+                }
+            }
+        }
+        public static void UpdateOutsourcedPart(int partID, OutsourcedPart outPart)
+        {
+            for (int i = 0; i < Parts.Count; i++)
+            {
+                if (Parts[i].GetType() == typeof(c968.OutsourcedPart))
+                {
+                    OutsourcedPart newPart = (OutsourcedPart)Parts[i];
+
+                    if (newPart.PartID == partID)
+                    {
+                        newPart.Name = outPart.Name;
+                        newPart.InStock = outPart.InStock;
+                        newPart.Price = outPart.Price;
+                        newPart.Max = outPart.Max;
+                        newPart.Min = outPart.Min;
+                        newPart.CompanyName = outPart.CompanyName;
+                    }
                 }
             }
         }

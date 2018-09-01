@@ -17,18 +17,23 @@ namespace c968
             InitializeComponent();
         }
 
-        // Convert price from double to decimal?
-        // TO TEST
         private void btnAddPartSave_Click(object sender, EventArgs e)
         {
+            // Exception Control Set 1.3
+            if (AddPartMaxBoxText < AddPartMinBoxText)
+            {
+                MessageBox.Show("Minimum cannot be greate than the Maximum.");
+                return;
+            }
+
             if (radioAddInHouse.Checked)
             {
-                Part inHouse = new InHousePart((Inventory.Parts.Count + 1), AddPartNameBoxText, AddPartInvBoxText, AddPartPriceBoxText, AddPartMaxBoxText, AddPartMinBoxText, int.Parse(AddPartMachComBoxText));
+                InHousePart inHouse = new InHousePart((Inventory.Parts.Count + 1), AddPartNameBoxText, AddPartInvBoxText, AddPartPriceBoxText, AddPartMaxBoxText, AddPartMinBoxText, int.Parse(AddPartMachComBoxText));
                 Inventory.AddPart(inHouse);
             }
             else
             {
-                Part outsourced = new OutsourcedPart((Inventory.Parts.Count + 1), AddPartNameBoxText, AddPartInvBoxText, AddPartPriceBoxText, AddPartMaxBoxText, AddPartMinBoxText, AddPartMachComBoxText);
+                OutsourcedPart outsourced = new OutsourcedPart((Inventory.Parts.Count + 1), AddPartNameBoxText, AddPartInvBoxText, AddPartPriceBoxText, AddPartMaxBoxText, AddPartMinBoxText, AddPartMachComBoxText);
                 Inventory.AddPart(outsourced);
             }
             this.Close();
@@ -50,10 +55,5 @@ namespace c968
         {
             this.Close();
         }
-
-        //public void RemoveText(object sender, EventArgs e)
-        //{
-        //    addPartMachComBox.Text = "";
-        //}
     }
 }

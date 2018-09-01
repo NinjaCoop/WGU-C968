@@ -305,7 +305,7 @@
             get { return int.Parse(addPartMinBox.Text); }
             set { addPartMinBox.Text = value.ToString(); }
         }
-        // Add properties for Machine ID and Company Name - maybe start this as a string
+        // Keep this as a string since no calculations will be done
         public string AddPartMachComBoxText
         {
             get { return addPartMachComBox.Text; }

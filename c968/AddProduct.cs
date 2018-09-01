@@ -51,16 +51,24 @@ namespace c968
             }
         }
 
-        // TEST - SEARCH BUTTON
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            string searchValue = searchBoxAddProd.Text;
+            int searchValue = int.Parse(searchBoxAddProd.Text);
+
+            Part match = Inventory.LookupPart(searchValue);
+
             foreach (DataGridViewRow row in addProductGrid1.Rows)
             {
-                if (row.Cells[1].Value.ToString().Contains(searchValue))
+                Part part = (Part)row.DataBoundItem;
+
+                if (part.PartID == match.PartID)
                 {
                     row.Selected = true;
                     break;
+                }
+                else
+                {
+                    row.Selected = false;
                 }
             }
         }
@@ -73,14 +81,20 @@ namespace c968
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            // Exception Control Set 1.3
+            if (AddProdMaxBoxText < AddProdMinBoxText)
+            {
+                MessageBox.Show("Minimum cannot be greate than the Maximum.");
+                return;
+            }
+
+            // Creates new product with given values from textboxes and adds that product to the inventory.
             Product productToAdd = new Product((Inventory.Products.Count + 1), AddProdNameBoxText, AddProdInvBoxText, AddProdPriceBoxText, AddProdMaxBoxText, AddProdMinBoxText);
             Inventory.AddProduct(productToAdd);
 
-            // Loop through the lower table to add parts to the given Product's associated parts list.
-            foreach(DataGridViewRow row in addProductGrid2.Rows)
+            foreach(Part part in partsToAdd)
             {
-                Part newPart = (Part)row.DataBoundItem;
-                productToAdd.AddAssociatedPart(newPart);
+                productToAdd.AddAssociatedPart(part);
             }
             this.Close();
         }
