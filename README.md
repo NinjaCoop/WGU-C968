@@ -1,4 +1,4 @@
-# WGU-C968
+# C968 - Inventory Manager
 Inventory Management program in C#. The requirements are below.
  
 I. GUI
